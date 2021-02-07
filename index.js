@@ -10,7 +10,7 @@ fastify.get('/archiv/:relacia', async (request, reply) => {
     console.log(request.relacia);
     reply
         .header('Content-Type', 'application/xml; charset=utf-8')
-        .send((await parsujArchiv(request.params.relacia)).atom1());
+        .send((await parsujArchiv(request.params.relacia)).rss2());
 });
 
 fastify.listen(4488, (err, address) => {
@@ -42,10 +42,13 @@ async function parsujArchiv(relacia) {
     const zoznamVysielani = Array.from(document.querySelectorAll('#archlst li')).filter(element => element.querySelector('div.headesc'));
 
     for (const vysielanie of zoznamVysielani) {
+        const zaznamy = vysielanie.querySelectorAll('.right a');
+        let mojZaznam = zaznamy[zaznamy.length - 1];
+
         feed.addItem({
             title: vysielanie.querySelector('div.headesc strong').innerText,
-            id: vysielanie.querySelector('.right.lne a').getAttribute('data-id'),
-            link: vysielanie.querySelector('.right.lne a').getAttribute('href'),
+            id: mojZaznam.getAttribute('data-id'),
+            link: mojZaznam.getAttribute('href'),
             date: DateTime.fromFormat(vysielanie.querySelector('.headesc strong').innerText, 'dd.MM.yyyy').toJSDate(),
             description: Array.from(vysielanie.querySelectorAll('.headesc p')).reduce((vysledok, element) => vysledok + element.toString() + '\n', '')
         });
