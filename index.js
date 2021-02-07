@@ -49,6 +49,10 @@ async function parsujArchiv(relacia) {
             title: vysielanie.querySelector('div.headesc strong').innerText,
             id: mojZaznam.getAttribute('data-id'),
             link: mojZaznam.getAttribute('href'),
+            enclosure: {
+                url: mojZaznam.getAttribute('href'),
+                type: 'audio/mpeg'
+            },
             date: DateTime.fromFormat(vysielanie.querySelector('.headesc strong').innerText, 'dd.MM.yyyy').toJSDate(),
             description: Array.from(vysielanie.querySelectorAll('.headesc p')).reduce((vysledok, element) => vysledok + element.toString() + '\n', '')
         });
